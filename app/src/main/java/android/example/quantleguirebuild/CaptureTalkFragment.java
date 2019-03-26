@@ -1,13 +1,20 @@
 package android.example.quantleguirebuild;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+
+import com.newventuresoftware.waveform.WaveformView;
 
 
 /**
@@ -17,11 +24,41 @@ public class CaptureTalkFragment extends Fragment {
 
 
     private OnCaptureTalkFragmentInteractionListener mListener;
+    private WaveformView mWaveForm;
+    private BroadcastReceiver receiver;
+    private IntentFilter filter;
 
     public CaptureTalkFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onResume() {
+        // BroadcastReceiver
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                short[] audioBuffer = intent.getShortArrayExtra("audioBuffer");
+                // add Samples to waveformview
+                short[] oldSamples = mWaveForm.getSamples();
+                short[] samples = new short[oldSamples.length + audioBuffer.length];
+
+                int index = oldSamples.length;
+
+                for (int i = 0; i < oldSamples.length; i++) {
+                    samples[i] = oldSamples[i];
+                }
+                for (int i = 0; i < audioBuffer.length; i++) {
+                    samples[i + index] = audioBuffer[i];
+                }
+                mWaveForm.setSamples(samples);
+            }
+        };
+        filter = new IntentFilter(Constants.BUFFER);
+        getActivity().registerReceiver(receiver, filter);
+        super.onResume();
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -54,13 +91,29 @@ public class CaptureTalkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_capture_talk, container, false);
+        View view = inflater.inflate(R.layout.fragment_capture_talk, container, false);
+        mWaveForm = view.findViewById(R.id.waveformView);
+
+        Switch onOffSwitch = view.findViewById(R.id.switch1);
+        onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mListener.OnSwitchRecordingState(isChecked);
+            }
+
+        });
+
+
+        return view;
     }
 
 
     public interface OnCaptureTalkFragmentInteractionListener {
         // TODO: Update argument type and name
         void OnCaptureTalkFragmentInteraction(Uri uri);
+
+        void OnSwitchRecordingState(Boolean shouldRecord);
     }
 
 }
