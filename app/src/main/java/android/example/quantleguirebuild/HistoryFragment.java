@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,37 @@ import java.util.LinkedList;
  * to handle interaction events.
  */
 public class HistoryFragment extends Fragment {
+    private static final String LOG_TAG = "HistoryFragment";
+
+    @Override
+    public void onStart() {
+        Log.d(LOG_TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(LOG_TAG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(LOG_TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(LOG_TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(LOG_TAG, "onDestroy");
+        super.onDestroy();
+    }
 
     private OnHistoryFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
@@ -35,6 +67,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateView");
 
         // Put initial data into the word list.
         for (int i = 0; i < 20; i++) {
@@ -64,6 +97,7 @@ public class HistoryFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d(LOG_TAG, "onAttach");
         super.onAttach(context);
         if (context instanceof OnHistoryFragmentInteractionListener) {
             mListener = (OnHistoryFragmentInteractionListener) context;
@@ -75,6 +109,7 @@ public class HistoryFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d(LOG_TAG, "onDetach");
         super.onDetach();
         mListener = null;
     }
